@@ -1,0 +1,40 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+development:
+  <<: *default
+  database: care_sync_backend_development
+  username: postgres
+  password: "1234"
+  host: localhost
+
+test:
+  <<: *default
+  database: care_sync_backend_test
+  username: postgres
+  password: "1234"
+  host: localhost
+
+production:
+  primary: &primary_production
+    <<: *default
+    database: care_sync_backend_production
+    username: care_sync_backend
+    password: <%= ENV["CARE_SYNC_BACKEND_DATABASE_PASSWORD"] %>
+
+  cache:
+    <<: *primary_production
+    database: care_sync_backend_production_cache
+    migrations_paths: db/cache_migrate
+
+  queue:
+    <<: *primary_production
+    database: care_sync_backend_production_queue
+    migrations_paths: db/queue_migrate
+
+  cable:
+    <<: *primary_production
+    database: care_sync_backend_production_cable
+    migrations_paths: db/cable_migrate
